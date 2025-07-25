@@ -1,79 +1,210 @@
-.container-login {
-    width: 100%;
-    height: calc(100% - 50px);
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: "Outfit", sans-serif;
+}
+
+body {
+    height: 100vh;
+    background: url("../pic/bg.jpg") no-repeat center center fixed;
+    background-size: cover;
     display: flex;
-    align-items: center;
     justify-content: center;
+    align-items: center;
+    position: relative;
 }
 
-.login-dialog {
-    width: 400px;
-    height: 370px; /* 调整高度以适应验证码 */
-    background-color: rgba(255, 255, 255, 0.8);
-    padding-top: 20px;
-    border-radius: 10px;
+body::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.25);
+    z-index: 0;
 }
 
-.login-dialog h3 {
+.container-login {
+    position: relative;
+    z-index: 1;
+    width: 480px;
+    padding: 40px;
+    border-radius: 20px;
+    background: rgba(255, 255, 255, 0.15);
+    backdrop-filter: blur(14px);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.25);
+    color: #fff;
+}
+
+.logo-container {
     text-align: center;
+    margin-bottom: 20px;
 }
 
-.login-dialog .row {
-    width: 280px;
-    height: 40px;
-    margin: 10px auto;
+.logo-container img {
+    width: 70px;
+    height: 70px;
+    object-fit: cover;
+    border-radius: 50%;
+    box-shadow: 0 6px 14px rgba(0, 0, 0, 0.2);
+}
+
+.container-login h2 {
+    font-size: 24px;
+    font-weight: 600;
+    text-align: center;
+    margin-bottom: 30px;
+    color: #ffffffee;
+}
+
+.form-group {
+    margin-bottom: 20px;
     display: flex;
-    justify-content: space-between;
+    flex-direction: column;
+}
+
+.form-group label {
+    font-weight: 600;
+    font-size: 14px;
+    color: #ffffffd9;
+    margin-bottom: 8px;
+}
+
+.input-wrapper {
+    position: relative;
+    display: flex;
     align-items: center;
 }
 
-.login-dialog .row>input {
-    width: 220px;
-    height: 35px;
-    border-radius: 5px;
+.form-group input {
+    width: 100%;
+    padding: 12px 44px 12px 16px;
+    font-size: 15px;
+    border-radius: 10px;
     border: none;
     outline: none;
-    padding-left: 10px;
+    background: rgba(255, 255, 255, 0.2);
+    color: #fff;
+    transition: all 0.2s;
+    line-height: 1.2;
 }
 
-.login-dialog .verificationCodeImg {
-    display: block; /* 确保图片在新的行中显示 */
-    margin-top: 10px; /* 添加上边距以分隔输入框和图片 */
-    margin-left: auto; /* 自动左边距以居中图片（如果需要的话） */
-    margin-right: auto; /* 自动右边距以居中图片（如果需要的话） */
+.form-group input::placeholder {
+    color: #ffffffaa;
+    font-size: 14px;
+}
+
+.form-group input:focus {
+    background: rgba(255, 255, 255, 0.3);
+    box-shadow: 0 0 0 2px #38bdf855;
+}
+
+.input-wrapper svg.icon {
+    position: absolute;
+    right: 14px;
+    width: 20px;
+    height: 20px;
+    fill: #ffffffaa;
+    pointer-events: none;
+    transition: fill 0.3s, transform 0.3s;
+    top: 50%;
+    transform: translateY(-50%);
+    cursor: default;
+}
+
+.form-group input:focus + svg.icon {
+    fill: #38bdf8;
+    transform: translateY(-50%) scale(1.3);
+}
+
+.email-code-group {
+    display: flex;
+    gap: 10px;
+    position: relative;
+    align-items: center;
+    width: 100%;
+}
+
+.email-code-group input {
+    flex: 2;
+    padding: 12px 44px 12px 16px;
+    border-radius: 10px;
+    border: none;
+    outline: none;
+    background: rgba(255, 255, 255, 0.2);
+    color: #fff;
+    font-size: 15px;
+    transition: all 0.2s;
+    line-height: 1.2;
+}
+
+.email-code-group input::placeholder {
+    color: #ffffffaa;
+    font-size: 14px;
+}
+
+.email-code-group input:focus {
+    background: rgba(255, 255, 255, 0.3);
+    box-shadow: 0 0 0 2px #38bdf855;
+}
+
+.email-code-group svg.icon {
+    position: absolute;
+    right: 120px;
+    top: 50%;
+    width: 18px;
+    height: 18px;
+    fill: #ffffffaa;
+    pointer-events: none;
+    transition: fill 0.3s, transform 0.3s;
+    transform: translateY(-50%);
+    cursor: default;
+}
+
+.email-code-group input:focus + svg.icon {
+    fill: #38bdf8;
+    transform: translateY(-50%) scale(1.3);
+}
+
+.btn-code {
+    flex: 1;
+    background: linear-gradient(to right, #f59e0b, #fbbf24);
+    color: #fff;
+    border: none;
+    border-radius: 10px;
+    font-size: 15px;
     cursor: pointer;
-    border-radius: 5px;
-    max-width: 100%; /* 确保图片不会超出容器宽度 */
+    transition: all 0.2s;
+    font-weight: 600;
+    height: 44px;
 }
 
-/* 确保登录按钮和注册按钮形状一致 */
-#submit, .btn-register {
-    width: 280px;        /* 设置相同的宽度 */
-    height: 40px;        /* 设置相同的高度 */
-    border-radius: 5px; /* 添加相同的圆角 */
-    border: none;        /* 确保没有边框 */
-    cursor: pointer;     /* 鼠标悬停时显示手型光标 */
-    font-size: 16px;     /* 设置相同的字体大小 */
+.btn-code:hover {
+    transform: translateY(-1px);
+    opacity: 0.95;
 }
 
-/* 登录按钮的样式 */
-#submit {
-    background-color: green; /* 设置绿色 */
+.btn {
+    width: 100%;
+    padding: 14px 0;
+    margin-top: 14px;
+    border: none;
+    border-radius: 12px;
     color: white;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: 0.3s ease-in-out;
 }
 
-/* 登录按钮的悬停样式 */
-#submit:hover {
-    background-color: darkgreen;
+.btn-login {
+    background: linear-gradient(to right, #38bdf8, #0ea5e9);
 }
 
-/* 注册按钮的样式 */
-.btn-register {
-    background-color: orange; /* 设置橙色 */
-    color: white;
+.btn-secondary {
+    background: linear-gradient(to right, #c084fc, #a855f7);
 }
 
-/* 注册按钮的悬停样式 */
-.btn-register:hover {
-    background-color: darkorange; /* 添加悬停效果 */
+.btn:hover {
+    transform: translateY(-2px);
+    opacity: 0.95;
 }

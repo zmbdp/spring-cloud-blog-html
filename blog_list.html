@@ -1,84 +1,155 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="zh-CN">
 
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>博客列表页</title>
-
-    <link rel="stylesheet" href="css/common.css">
+    <title>博客列表页 - 精美动态视差背景</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="css/list.css">
-
 </head>
 
 <body>
+    <!-- 视差背景层 -->
+    <div class="parallax-bg">
+        <div class="parallax-layer layer-1"></div>
+        <div class="parallax-layer layer-2"></div>
+        <div class="parallax-layer layer-3"></div>
+    </div>
+
     <div class="nav">
-        <img src="pic/logo2.jpg" alt="">
-        <span class="blog-title">我的博客系统</span>
+        <div class="logo-container">
+            <img src="pic/logo.jpg" alt="博客Logo">
+            <span class="blog-title">我的博客系统</span>
+        </div>
         <div class="space"></div>
-        <a class="nav-span" href="blog_list.html">主页</a>
-        <a class="nav-span" href="blog_edit.html">写博客</a>
-        <a class="nav-span" href="#" onclick="logout()">注销</a>
+        <div class="nav-links">
+            <a class="nav-span" href="blog_list.html">
+                <i class="fas fa-home nav-icon"></i>主页
+            </a>
+            <a class="nav-span" href="blog_edit.html">
+                <i class="fas fa-pen nav-icon"></i>写博客
+            </a>
+            <a class="nav-span" href="#" onclick="logout()">
+                <i class="fas fa-sign-out-alt nav-icon"></i>注销
+            </a>
+        </div>
     </div>
 
     <div class="container">
         <div class="left">
             <div class="card">
-                <img src="pic/avatar.jpg" alt="">
-                <h3></h3>
-                <a href="#">GitHub 地址</a>
+                <img src="pic/avatar.jpg" alt="用户头像">
+                <h3>博客作者</h3>
+                <a href="#"><i class="fab fa-github"></i> GitHub 地址</a>
                 <div class="row">
                     <span>文章</span>
                     <span>分类</span>
                 </div>
                 <div class="row">
-                    <span>2</span>
-                    <span>1</span>
+                    <span>12</span>
+                    <span>5</span>
                 </div>
             </div>
         </div>
+
         <div class="right">
+            <div class="loader">
+                <div class="spinner"></div>
+                <p>正在加载博客内容...</p>
+            </div>
         </div>
     </div>
+
     <script src="js/jquery.min.js"></script>
     <script src="js/common.js"></script>
-
     <script>
-        getBlogList();
+        // 页面加载完成后开始获取博客列表
+        $(document).ready(function () {
+            // 显示加载动画
+            $(".loader").show();
+
+            // 模拟数据加载延迟
+            setTimeout(function () {
+                getBlogList();
+            }, 1500);
+
+            // 获取用户信息
+            var url = "/user/getUserInfo?userId=" + localStorage.getItem("loginUserId");
+            getUserInfo(url);
+            
+            // 视差效果JS
+            const parallaxBg = document.querySelector('.parallax-bg');
+            
+            document.addEventListener('mousemove', (e) => {
+                const mouseX = e.clientX / window.innerWidth;
+                const mouseY = e.clientY / window.innerHeight;
+                
+                const moveX = (mouseX - 0.5) * 50; // 增加移动幅度到50px
+                const moveY = (mouseY - 0.5) * 50;
+                
+                // 应用不同的移动速度到各层
+                document.querySelector('.layer-1').style.transform = 
+                    `translate(${moveX * 0.3}px, ${moveY * 0.3}px)`;
+                document.querySelector('.layer-2').style.transform = 
+                    `translate(${moveX * 0.6}px, ${moveY * 0.6}px)`;
+                document.querySelector('.layer-3').style.transform = 
+                    `translate(${moveX * 0.9}px, ${moveY * 0.9}px)`;
+            });
+        });
+
         function getBlogList() {
             $.ajax({
                 type: "get",
-                url: "/blog/getlist",
+                url: "/blog/getList",
                 success: function (result) {
-                    if (result.code == 200 && result.data != null) {
+                    $(".loader").hide();
+
+                    if (result.code == 200 && result.data != null && result.data.length > 0) {
                         var blogList = result.data;
                         var finalHtml = "";
                         for (var blog of blogList) {
+                            // 截取内容摘要
+                            var contentPreview = blog.content.length > 150 ?
+                                blog.content.substring(0, 150) + "..." : blog.content;
+
                             finalHtml += '<div class="blog">';
-                            finalHtml += '<div class="title">' + blog.title + '</div>';
-                            finalHtml += '<div class="date">' + blog.updateTime + '</div>';
-                            finalHtml += '<div class="desc">' + blog.content + '</div>';
-                            finalHtml += '<a class="detail" href="blog_detail.html?blogId=' + blog.id + '">查看全文&gt;&gt;</a>';
+                            finalHtml += '<div class="title"><i class="fas fa-bookmark"></i> ' + blog.title + '</div>';
+                            finalHtml += '<div class="date"><i class="far fa-calendar-alt"></i> ' + blog.updateTime + '</div>';
+                            finalHtml += '<div class="desc">' + contentPreview + '</div>';
+                            finalHtml += '<a class="detail" href="blog_detail.html?blogId=' + blog.id + '">';
+                            finalHtml += '<span>查看全文</span>';
+                            finalHtml += '<i class="fas fa-arrow-right"></i>';
+                            finalHtml += '</a>';
                             finalHtml += '</div>';
                         }
-                        $(".right").html(finalHtml);
+                        $(".right").append(finalHtml);
+                    } else {
+                        $(".right").html('<div class="blog"><div class="title">暂无博客</div><div class="desc">您还没有发表任何博客，点击"写博客"开始创作吧！</div></div>');
                     }
                 },
                 error: function (error) {
+                    $(".loader").hide();
+
                     // 未登录
                     if (error != null && error.status == 401) {
                         alert("请先登录");
                         location.href = "blog_login.html";
+                    } else {
+                        $(".right").html('<div class="blog"><div class="title">加载失败</div><div class="desc">无法获取博客数据，请稍后再试</div></div>');
                     }
                 }
             });
         }
-        //获取用户信息
-        getUserInfo("/user/getUserInfo");
 
+        // 注销函数
+        function logout() {
+            localStorage.removeItem("loginUserId");
+            localStorage.removeItem("token");
+            location.href = "blog_login.html";
+        }
     </script>
-
 </body>
 
 </html>

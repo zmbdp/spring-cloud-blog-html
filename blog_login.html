@@ -1,82 +1,158 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="zh">
 
 <head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>博客登陆页</title>
-
-    <link rel="stylesheet" href="css/common.css">
-    <link rel="stylesheet" href="css/login.css">
-
+    <meta charset="UTF-8" />
+    <title>登录 - 我的博客系统</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="css/login.css" />
 </head>
 
 <body>
-    <div class="nav">
-        <img src="pic/logo2.jpg" alt="">
-        <span class="blog-title">我的博客系统</span>
-        <div class="space"></div>
-        <a class="nav-span" href="blog_list.html">主页</a>
-        <a class="nav-span" href="blog_edit.html">写博客</a>
-    </div>
-
     <div class="container-login">
-        <div class="login-dialog">
-            <h3>登陆</h3>
-            <div class="row">
-                <span>用户名</span>
-                <input type="text" name="username" id="username">
-            </div>
-            <div class="row">
-                <span>密码</span>
-                <input type="password" name="password" id="password">
-            </div>
-            <div class="row">
-                <span>验证码</span>
-                <input type="text" name="captcha" id="captcha" class="form-control">
-            </div>
-            <div class="row">
-                <img class="verificationCodeImg" src="Kaptcha" title="看不清？点我逝逝"
-                    onclick="this.src='/admin/captcha?'+Math.random();" />
-            </div>
-            <div class="row">
-                <button id="submit" onclick="login()">登录</button>
-            </div>
-            <div class="row">
-                <button type="button" class="btn-register" onclick="register()">注册</button>
+        <div class="logo-container">
+            <img src="pic/logo.jpg" alt="Logo" />
+        </div>
+        <h2>欢迎回来，登录你的博客账号 ✨</h2>
+
+        <div class="form-group">
+            <label for="email">邮箱账号</label>
+            <div class="input-wrapper">
+                <input id="email" type="email" placeholder="请输入您的邮箱账号" />
+                <svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                    <path
+                        d="M20 4H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2zm0 2-8 5-8-5h16zm0 12H4V8l8 5 8-5v10z" />
+                </svg>
             </div>
         </div>
+
+        <div class="form-group">
+            <label for="password">登录密码</label>
+            <div class="input-wrapper">
+                <input id="password" type="password" placeholder="请输入密码" />
+                <svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                    <path
+                        d="M12 17a2 2 0 1 0 0-4 2 2 0 0 0 0 4zm6-8h-1V7a5 5 0 0 0-10 0v2H6a2 2 0 0 0-2 2v7a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-7a2 2 0 0 0-2-2zm-6-2a3 3 0 0 1 3 3v2H9V10a3 3 0 0 1 3-3z" />
+                </svg>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label for="captcha">邮箱验证码</label>
+            <div class="email-code-group">
+                <input id="captcha" type="text" placeholder="请输入验证码" />
+                <svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                    <path
+                        d="M12 2a10 10 0 1 0 10 10A10 10 0 0 0 12 2zm0 18a8 8 0 1 1 8-8 8 8 0 0 1-8 8zm-1-7h2v5h-2zm0-4h2v2h-2z" />
+                </svg>
+                <button class="btn-code">获取验证码</button>
+            </div>
+        </div>
+
+        <button class="btn btn-login">立即登录</button>
+        <button class="btn btn-secondary">我要注册</button>
     </div>
+
+    <!-- <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script> -->
     <script src="js/jquery.min.js"></script>
+    <script src="js/common.js"></script>
     <script>
-        function register() {
-            // 点击注册
-            location.href = "blog_register.html"; // 跳转到注册页面
-        }
-        function login() {
-            // 点击登录
-            // location.assign("blog_list.html");
-            $.ajax({
-                type: "post",
-                url: "/user/login",
-                data: {
-                    userName: $("#username").val(),
-                    password: $("#password").val(),
-                    captcha: $("#captcha").val()
-                },
-                success: function (result) {
-                    if (result.code == 200 && result.data != null) {
-                        //密码正确
-                        //存储token
-                        localStorage.setItem("user_token", result.data);
-                        location.href = "blog_list.html";
-                    } else {
-                        alert(result.errorMsg);
-                    }
+        $(function () {
+            const $btnCode = $(".btn-code");
+            const $btnLogin = $(".btn-login");
+
+            $btnCode.click(function () {
+                const email = $("#email").val().trim();
+                if (!email) {
+                    alert("请输入邮箱账号");
+                    return;
                 }
+                const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                if (!emailRegex.test(email)) {
+                    alert("邮箱格式不正确，请检查");
+                    return;
+                }
+                $btnCode.prop("disabled", true).text("发送中...");
+                $.ajax({
+                    type: "POST",
+                    url: "/captcha/getCaptchaCode",
+                    contentType: "application/json",
+                    data: JSON.stringify({
+                        email: email,
+                        captchaType: "login"
+                    }),
+                    success: function (res) {
+                        if (res.code == 200) {
+                            alert("验证码已发送，请查收邮箱");
+                            let countdown = 60;
+                            const timer = setInterval(() => {
+                                if (countdown <= 0) {
+                                    clearInterval(timer);
+                                    $btnCode.prop("disabled", false).text("获取验证码");
+                                } else {
+                                    $btnCode.text(`重新发送(${countdown--})`);
+                                }
+                            }, 1000);
+                        } else {
+                            alert(res.errorMsg || "验证码发送失败");
+                            $btnCode.prop("disabled", false).text("获取验证码");
+                        }
+                    },
+                    error: function () {
+                        alert("验证码发送异常，请稍后重试");
+                        $btnCode.prop("disabled", false).text("获取验证码");
+                    }
+                });
             });
-        }
+
+            $btnLogin.click(function () {
+                const email = $("#email").val().trim();
+                const password = $("#password").val();
+                const inputCaptcha = $("#captcha").val().trim();
+                // if (!email || !password || !inputCaptcha) {
+                //     alert("邮箱、密码和验证码均不能为空");
+                //     return;
+                // }
+                $.ajax({
+                    type: "post",
+                    url: "/user/login",
+                    contentType: "application/json",
+                    data: JSON.stringify({
+                        email: email,
+                        password: password,
+                        inputCaptcha: inputCaptcha
+                    }),
+                    success: function (result) {
+                        if (result.code === 200 && result.data) {
+                            var response = result.data;
+                            localStorage.setItem("user_token", response.token);
+                            localStorage.setItem("loginUserId", response.userId);
+                            setTimeout(() => {
+                                location.assign("blog_list.html");
+                            }, 100); // 稳妥一点延迟跳转
+                        } else {
+                            // 确保从正确的位置获取错误信息
+                            alert(result.errorMsg || "登录失败，请检查信息");
+                        }
+                    },
+                    error: function (jqXHR) {
+                        // 正确解析错误响应
+                        try {
+                            // 尝试解析响应JSON
+                            const errorResponse = JSON.parse(jqXHR.responseText);
+                            alert(errorResponse.errorMsg || "请求失败");
+                        } catch (e) {
+                            // 如果无法解析JSON，使用状态信息
+                            alert("请求失败: " + jqXHR.status + " " + jqXHR.statusText);
+                        }
+                    }
+                });
+            });
+
+            $(".btn-secondary").click(function () {
+                location.href = "blog_register.html";
+            });
+        });
     </script>
 </body>
 

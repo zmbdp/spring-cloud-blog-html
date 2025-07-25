@@ -1,4 +1,6 @@
+const BaseUrl = "http://127.0.0.1:10030";
 $(document).ajaxSend(function (e, xqr, op) {
+    op.url = BaseUrl + op.url;
     var token = localStorage.getItem("user_token");
     xqr.setRequestHeader("user_token", token);
 });
@@ -15,7 +17,8 @@ function getUserInfo(url) {
                 $(".left .card h3").text(user.userName);
                 $(".left .card a").attr("href", user.githubUrl);
             } else {
-                location.href = "blog_login.html"
+                // 确保从正确的位置获取错误信息
+                alert(result.errorMsg || "登录失败，请检查信息");
             }
         },
         error: function (error) {
