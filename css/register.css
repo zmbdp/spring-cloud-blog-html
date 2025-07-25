@@ -1,95 +1,264 @@
-/* 通用样式 */
-.container-register {
-    width: 100%;
-    height: calc(100% - 50px);
+/* 基础样式 */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Segoe UI', 'Microsoft YaHei', sans-serif;
+}
+
+body {
+    background: linear-gradient(135deg, #1a2980, #26d0ce);
+    min-height: 100vh;
     display: flex;
+    justify-content: center;
     align-items: center;
+    padding: 20px;
+}
+
+/* 注册容器 */
+.register-container {
+    width: 100%;
+    max-width: 450px;
+    display: flex;
     justify-content: center;
 }
 
-.register-dialog {
-    width: 400px;
-    height: 480px; /* 调整高度以适应所有输入框和按钮 */
-    background-color: rgba(255, 255, 255, 0.8);
-    padding-top: 20px;
-    border-radius: 10px;
+/* 注册卡片 */
+.register-card {
+    width: 100%;
+    background: white;
+    border-radius: 16px;
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
+    overflow: hidden;
+    padding: 40px 30px;
+    position: relative;
 }
 
-.register-dialog h3 {
+.register-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 6px;
+    background: linear-gradient(to right, #ff8a00, #da1b60);
+}
+
+/* 卡片头部 */
+.card-header {
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+.logo-circle {
+    width: 80px;
+    height: 80px;
+    background: linear-gradient(135deg, #6a11cb, #2575fc);
+    border-radius: 50%;
+    margin: 0 auto 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 32px;
+    box-shadow: 0 5px 15px rgba(106, 17, 203, 0.3);
+}
+
+.card-header h2 {
+    color: #2c3e50;
+    font-size: 28px;
+    margin: 10px 0 5px;
+}
+
+.card-header p {
+    color: #7f8c8d;
+    font-size: 16px;
+    margin: 0;
+}
+
+/* logo */
+.logo-circle {
+    width: 80px;
+    height: 80px;
+    background: transparent; /* 移除渐变背景 */
+    border-radius: 50%;
+    margin: 0 auto 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden; /* 确保图片不会超出圆形边界 */
+    box-shadow: 0 5px 15px rgba(106, 17, 203, 0.3);
+}
+
+.logo-circle img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain; /* 保持图片比例 */
+}
+
+/* 表单组 */
+.form-group {
+    margin-bottom: 20px;
+    position: relative;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 600;
+    color: #2c3e50;
+    font-size: 15px;
+}
+
+.form-group label i {
+    margin-right: 8px;
+    color: #3498db;
+    width: 20px;
     text-align: center;
 }
 
-.register-dialog .row {
-    width: 280px;
-    height: 40px;
-    margin: 10px auto;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
-
-.register-dialog .row>span {
-    display: inline-block;
-    width: 120px; /* 根据需要调整宽度 */
-    text-align: left; /* 确保文字左对齐 */
-}
-
-.register-dialog .row>input {
-    width: 300px; /* 根据需要调整宽度 */
-    height: 35px;
-    border-radius: 5px;
-    border: none;
-    outline: none;
-    padding-left: 10px;
-    margin-left: 10px; /* 确保输入框与标签之间有间距 */
-}
-
-.register-dialog .verificationCodeImg {
-    display: block; /* 确保图片在新的行中显示 */
-    margin-top: 10px; /* 添加上边距以分隔输入框和图片 */
-    margin-left: auto; /* 自动左边距以居中图片（如果需要的话） */
-    margin-right: auto; /* 自动右边距以居中图片（如果需要的话） */
-    cursor: pointer;
-    border-radius: 5px;
-    max-width: 100%; /* 确保图片不会超出容器宽度 */
-}
-
-
-/* 按钮样式 */
-.button-row {
-    width: 280px;
-    margin: 20px auto 0;
-    display: flex;
-    flex-direction: column; /* 垂直方向排列 */
-    align-items: center;    /* 居中对齐 */
-    gap: 10px;              /* 按钮之间的间距 */
-}
-
-.button-row button {
+.form-group input {
     width: 100%;
-    height: 40px;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
+    padding: 14px 15px;
+    border: 1px solid #e0e6ed;
+    border-radius: 8px;
     font-size: 16px;
+    transition: all 0.3s ease;
+    box-sizing: border-box;
 }
 
-/* 注册按钮样式 */
-#submit {
-    background-color: orange;
+.form-group input:focus {
+    border-color: #3498db;
+    box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.2);
+    outline: none;
+}
+
+/* 错误消息 */
+.error-message {
+    color: #e74c3c;
+    font-size: 13px;
+    margin-top: 5px;
+    display: none;
+}
+
+/* 验证码组 */
+.captcha-group {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+.captcha-group .form-group {
+    flex: 1;
+    margin-bottom: 0;
+}
+
+.captcha-btn {
+    background: #3498db;
     color: white;
+    border: none;
+    border-radius: 8px;
+    padding: 0 20px;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    white-space: nowrap;
+    height: 50px;
+    align-self: flex-end;
 }
 
-#submit:hover {
-    background-color: darkorange;
+.captcha-btn:hover {
+    background: #2980b9;
 }
 
-/* 返回登录按钮样式 */
-#return {
-    background-color: gray;
+.captcha-btn:disabled {
+    background: #95a5a6;
+    cursor: not-allowed;
+}
+
+/* 按钮组 */
+.button-group {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    margin-top: 10px;
+}
+
+.btn-primary, .btn-secondary {
+    padding: 16px;
+    border-radius: 8px;
+    border: none;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-align: center;
+}
+
+.btn-primary {
+    background: linear-gradient(to right, #ff8a00, #da1b60);
     color: white;
+    box-shadow: 0 4px 15px rgba(218, 27, 96, 0.3);
 }
 
-#return:hover {
-    background-color: darkgray;
+.btn-primary:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 6px 20px rgba(218, 27, 96, 0.4);
+}
+
+.btn-secondary {
+    background: #f8f9fa;
+    color: #2c3e50;
+    border: 1px solid #e0e6ed;
+}
+
+.btn-secondary:hover {
+    background: #edf2f7;
+}
+
+/* 页脚 */
+.footer {
+    text-align: center;
+    margin-top: 25px;
+    padding-top: 20px;
+    border-top: 1px solid #eee;
+    color: #7f8c8d;
+    font-size: 15px;
+}
+
+.footer a {
+    color: #3498db;
+    text-decoration: none;
+    font-weight: 600;
+}
+
+.footer a:hover {
+    text-decoration: underline;
+}
+
+.terms {
+    font-size: 13px;
+    margin-top: 10px;
+    color: #95a5a6;
+}
+
+/* 响应式设计 */
+@media (max-width: 576px) {
+    .register-card {
+        padding: 30px 20px;
+    }
+    
+    .card-header h2 {
+        font-size: 24px;
+    }
+    
+    .captcha-group {
+        flex-direction: column;
+    }
+    
+    .captcha-btn {
+        width: 100%;
+        margin-top: 5px;
+    }
 }
