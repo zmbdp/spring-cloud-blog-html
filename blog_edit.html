@@ -7,6 +7,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>博客发布页</title>
 
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="css/common.css">
     <link rel="stylesheet" href="css/edit.css">
     <link rel="stylesheet" href="blog-editormd/css/editormd.css" />
@@ -14,22 +15,60 @@
 </head>
 
 <body>
-    <div class="nav">
-        <img src="pic/logo2.jpg" alt="">
-        <span class="blog-title">我的博客系统</span>
-        <div class="space"></div>
-        <a class="nav-span" href="blog_list.html">主页</a>
-        <a class="nav-span" href="blog_edit.html">写博客</a>
-        <a class="nav-span" href="#" onclick="logout()">注销</a>
+    <!-- 视差背景层 -->
+    <div class="parallax-bg">
+        <div class="parallax-layer layer-1"></div>
+        <div class="parallax-layer layer-2"></div>
+        <div class="parallax-layer layer-3"></div>
     </div>
-    <div class="content-edit">
-        <div class="push">
-            <input type="text" name="" id="title">
-            <input type="button" value="发布文章" id="submit" onclick="submit()">
+
+    <div class="nav">
+        <div class="logo-container">
+            <img src="pic/logo.jpg" alt="博客Logo">
+            <span class="blog-title">码上博客</span>
         </div>
-        <!-- markdown 插件 html代码 -->
-        <div id="editor">
-            <textarea style="display:none;" id="content" name="content">##在这里写下一篇博客</textarea>
+        <div class="space"></div>
+        <div class="nav-links">
+            <a class="nav-span" href="blog_list.html">
+                <i class="fas fa-home nav-icon"></i>主页
+            </a>
+            <a class="nav-span" href="blog_edit.html">
+                <i class="fas fa-pen nav-icon"></i>写博客
+            </a>
+            <a class="nav-span" href="#" onclick="logout()">
+                <i class="fas fa-sign-out-alt nav-icon"></i>退出登录
+            </a>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="content">
+            <div class="title">发布新博客</div>
+
+            <div class="form-group">
+                <label for="title">博客标题</label>
+                <div class="input-wrapper">
+                    <i class="fas fa-heading input-icon"></i>
+                    <input type="text" name="" id="title" placeholder="请输入博客标题">
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label>博客内容</label>
+                <!-- markdown 插件 html代码 -->
+                <div id="editor">
+                    <textarea style="display:none;" id="content" name="content">##在这里写下一篇博客</textarea>
+                </div>
+            </div>
+
+            <div class="operating">
+                <button class="btn-publish" onclick="submit()">
+                    <i class="fas fa-paper-plane"></i> 发布文章
+                </button>
+                <button class="btn-cancel" onclick="location.href='blog_list.html'">
+                    <i class="fas fa-times"></i> 取消
+                </button>
+            </div>
         </div>
     </div>
 
@@ -37,30 +76,58 @@
     <script src="blog-editormd/editormd.min.js"></script>
     <script src="js/common.js"></script>
     <script type="text/javascript">
-
         $(function () {
             var editor = editormd("editor", {
                 width: "100%",
                 height: "550px",
                 path: "blog-editormd/lib/"
             });
+
+            // 视差效果JS
+            document.addEventListener('mousemove', (e) => {
+                const mouseX = e.clientX / window.innerWidth;
+                const mouseY = e.clientY / window.innerHeight;
+
+                const moveX = (mouseX - 0.5) * 50;
+                const moveY = (mouseY - 0.5) * 50;
+
+                document.querySelector('.layer-1').style.transform =
+                    `translate(${moveX * 0.3}px, ${moveY * 0.3}px)`;
+                document.querySelector('.layer-2').style.transform =
+                    `translate(${moveX * 0.6}px, ${moveY * 0.6}px)`;
+                document.querySelector('.layer-3').style.transform =
+                    `translate(${moveX * 0.9}px, ${moveY * 0.9}px)`;
+            });
         });
 
         function submit() {
+            const title = $("#title").val().trim();
+            const content = $("#content").val().trim();
+
+            if (!title) {
+                alert("请输入博客标题");
+                return;
+            }
+
+            if (!content || content === "##在这里写下一篇博客") {
+                alert("请输入博客内容");
+                return;
+            }
+
             // 发布博客
             $.ajax({
                 type: "post",
                 url: "/blog/insertBlog",
                 data: {
-                    title: $("#title").val(),
-                    content: $("#content").val()
+                    title: title,
+                    content: content
                 },
                 success: function (result) {
                     if (result.code == 200) {
-                        alert("博客修改成功，点击页面跳转");
+                        alert("博客发布成功！");
                         location.href = "blog_list.html";
                     } else {
-                        alert(result.errorMsg);
+                        alert(result.errorMsg || "博客发布失败");
                     }
                 },
                 error: function (error) {
@@ -68,6 +135,13 @@
                     if (error != null && error.status == 401) {
                         alert("请先登录");
                         location.href = "blog_login.html";
+                    } else {
+                        try {
+                            const errorResponse = JSON.parse(error.responseText);
+                            alert(errorResponse.errorMsg || "请求失败: " + error.status + " " + error.statusText);
+                        } catch (e) {
+                            alert("请求失败: " + error.status + " " + error.statusText);
+                        }
                     }
                 }
             });

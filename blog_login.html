@@ -9,7 +9,17 @@
 </head>
 
 <body>
+    <!-- 动态背景 -->
+    <div class="background">
+        <div class="circle"></div>
+        <div class="circle"></div>
+        <div class="circle"></div>
+        <div class="circle"></div>
+        <div class="circle"></div>
+    </div>
+
     <div class="container-login">
+        <!-- 其他内容保持不变 -->
         <div class="logo-container">
             <img src="pic/logo.jpg" alt="Logo" />
         </div>
@@ -49,8 +59,14 @@
             </div>
         </div>
 
+        <!-- 在这两个按钮后面添加 -->
         <button class="btn btn-login">立即登录</button>
         <button class="btn btn-secondary">我要注册</button>
+
+        <!-- 添加忘记密码按钮 -->
+        <button class="btn btn-forgot-password" onclick="location.href='blog_forgot_password.html'">
+            <i class="fas fa-key"></i> 忘记密码
+        </button>
     </div>
 
     <!-- <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script> -->

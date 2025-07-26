@@ -7,6 +7,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>博客编辑页</title>
 
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="css/common.css">
     <link rel="stylesheet" href="css/edit.css">
     <link rel="stylesheet" href="blog-editormd/css/editormd.css" />
@@ -14,32 +15,88 @@
 </head>
 
 <body>
-    <div class="nav">
-        <img src="pic/logo2.jpg" alt="">
-        <span class="blog-title">我的博客系统</span>
-        <div class="space"></div>
-        <a class="nav-span" href="blog_list.html">主页</a>
-        <a class="nav-span" href="blog_edit.html">写博客</a>
-        <a class="nav-span" href="#" onclick="logout()">注销</a>
+    <!-- 视差背景层 -->
+    <div class="parallax-bg">
+        <div class="parallax-layer layer-1"></div>
+        <div class="parallax-layer layer-2"></div>
+        <div class="parallax-layer layer-3"></div>
     </div>
-    <div class="content-edit">
-        <div class="push">
-            <input type="hidden" id="blogId">
-            <input type="text" name="" id="title">
-            <input type="button" value="更新文章" id="submit" onclick="submit()">
+
+    <div class="nav">
+        <div class="logo-container">
+            <img src="pic/logo.jpg" alt="博客Logo">
+            <span class="blog-title">码上博客</span>
         </div>
-        <!-- markdown 插件 html代码 -->
-        <div id="editor">
-            <textarea style="display:none;" id="content">##在这里写下一篇博客</textarea>
+        <div class="space"></div>
+        <div class="nav-links">
+            <a class="nav-span" href="blog_list.html">
+                <i class="fas fa-home nav-icon"></i>主页
+            </a>
+            <a class="nav-span" href="blog_edit.html">
+                <i class="fas fa-pen nav-icon"></i>写博客
+            </a>
+            <a class="nav-span" href="#" onclick="logout()">
+                <i class="fas fa-sign-out-alt nav-icon"></i>退出登录
+            </a>
         </div>
     </div>
 
-    <!-- <script src="js/jquery.min.js"></script> -->
-    <script src="https://cdn.bootcdn.net/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <div class="container">
+        <div class="content">
+            <div class="title">编辑博客</div>
+
+            <div class="form-group">
+                <label for="title">博客标题</label>
+                <div class="input-wrapper">
+                    <i class="fas fa-heading input-icon"></i>
+                    <input type="hidden" id="blogId">
+                    <input type="text" name="" id="title" placeholder="请输入博客标题">
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label>博客内容</label>
+                <!-- markdown 插件 html代码 -->
+                <div id="editor">
+                    <textarea style="display:none;" id="content">##在这里写下一篇博客</textarea>
+                </div>
+            </div>
+
+            <div class="operating">
+                <button class="btn-publish" onclick="submit()">
+                    <i class="fas fa-paper-plane"></i> 更新文章
+                </button>
+                <button class="btn-cancel" onclick="location.href='blog_list.html'">
+                    <i class="fas fa-times"></i> 取消
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/jquery.min.js"></script>
     <script src="blog-editormd/editormd.min.js"></script>
     <script src="js/common.js"></script>
     <script type="text/javascript">
-        getBlogInfo();
+        $(function () {
+            getBlogInfo();
+
+            // 视差效果JS
+            document.addEventListener('mousemove', (e) => {
+                const mouseX = e.clientX / window.innerWidth;
+                const mouseY = e.clientY / window.innerHeight;
+
+                const moveX = (mouseX - 0.5) * 50;
+                const moveY = (mouseY - 0.5) * 50;
+
+                document.querySelector('.layer-1').style.transform =
+                    `translate(${moveX * 0.3}px, ${moveY * 0.3}px)`;
+                document.querySelector('.layer-2').style.transform =
+                    `translate(${moveX * 0.6}px, ${moveY * 0.6}px)`;
+                document.querySelector('.layer-3').style.transform =
+                    `translate(${moveX * 0.9}px, ${moveY * 0.9}px)`;
+            });
+        });
+
         function getBlogInfo() {
             // 获取博客的数据
             $.ajax({
@@ -67,36 +124,74 @@
                     if (error != null && error.status == 401) {
                         alert("请先登录");
                         location.href = "blog_login.html";
+                    } else {
+                        try {
+                            const errorResponse = JSON.parse(error.responseText);
+                            alert(errorResponse.errorMsg || "请求失败: " + error.status + " " + error.statusText);
+                        } catch (e) {
+                            alert("请求失败: " + error.status + " " + error.statusText);
+                        }
                     }
                 }
             });
         }
+
         function submit() {
+            const title = $("#title").val().trim();
+            const content = $("#content").val().trim();
+
+            if (!title) {
+                alert("请输入博客标题");
+                return;
+            }
+
+            if (!content || content === "##在这里写下一篇博客") {
+                alert("请输入博客内容");
+                return;
+            }
+
+            // 构造请求对象
+            const requestData = {
+                id: $("#blogId").val(),
+                title: title,
+                content: content
+            };
+
             $.ajax({
                 type: "post",
                 url: "/blog/update",
-                data: {
-                    id: $("#blogId").val(),
-                    title: $("#title").val(),
-                    content: $("#content").val()
-                },
+                contentType: "application/json", // 设置内容类型为JSON
+                data: JSON.stringify(requestData), // 将对象转换为JSON字符串
                 success: function (result) {
                     if (result.code == 200 && result.data == true) {
-                        alert("博客修改成功，点击页面跳转");
+                        alert("博客修改成功！");
                         location.href = "blog_list.html";
                     } else {
-                        alert("修改失败，请联系管理员");
+                        alert(result.errorMsg || "修改失败，请联系管理员");
                     }
                 },
                 error: function (error) {
                     if (error != null && error.status == 401) {
                         alert("请先登录");
                         location.href = "blog_login.html";
+                    } else {
+                        try {
+                            const errorResponse = JSON.parse(error.responseText);
+                            alert(errorResponse.errorMsg || "请求失败: " + error.status + " " + error.statusText);
+                        } catch (e) {
+                            alert("请求失败: " + error.status + " " + error.statusText);
+                        }
                     }
                 }
             });
         }
 
+        // 注销函数
+        function logout() {
+            localStorage.removeItem("loginUserId");
+            localStorage.removeItem("token");
+            location.href = "blog_login.html";
+        }
     </script>
 </body>
 

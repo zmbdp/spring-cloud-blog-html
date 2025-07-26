@@ -5,9 +5,9 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>博客列表页</title>
+    <title>作者博客列表</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="stylesheet" href="css/list.css">
+    <link rel="stylesheet" href="css/author_blogs.css">
 </head>
 
 <body>
@@ -40,17 +40,9 @@
     <div class="container">
         <div class="left">
             <div class="card">
-                <img src="pic/avatar.jpg" alt="" id="author-avatar" style="cursor: pointer;">
-                <h3 id="author-name"></h3>
-                <a href="#" id="github-link">GitHub 地址</a>
-                <div class="row">
-                    <span>文章</span>
-                    <span>分类</span>
-                </div>
-                <div class="row">
-                    <span id="article-count">0</span>
-                    <span id="category-count">0</span>
-                </div>
+                <img src="pic/avatar.jpg" alt="用户头像">
+                <h3 id="author-name">博客作者</h3>
+                <a href="#" id="github-link"><i class="fab fa-github"></i> GitHub 地址</a>
             </div>
         </div>
 
@@ -62,6 +54,16 @@
         </div>
     </div>
 
+    <!-- 返回顶部按钮 -->
+    <div class="back-to-top" id="backToTop">
+        <i class="fas fa-arrow-up"></i>
+    </div>
+
+    <!-- 返回列表按钮 -->
+    <div class="back-to-list" id="backToList">
+        <i class="fas fa-list"></i> 返回
+    </div>
+
     <script src="js/jquery.min.js"></script>
     <script src="js/common.js"></script>
     <script>
@@ -70,34 +72,28 @@
             // 显示加载动画
             $(".loader").show();
 
-            // 模拟数据加载延迟
-            setTimeout(function () {
-                getBlogList();
-            }, 1500);
+            // 获取URL参数中的userId
+            const urlParams = new URLSearchParams(window.location.search);
+            const userId = urlParams.get('userId');
 
-            // 获取用户信息
-            var userId = localStorage.getItem("loginUserId");
-            var url = "/user/getUserInfo?userId=" + userId;
-            getUserInfo(url);
-
-            // 添加头像点击事件
-            $("#author-avatar").click(function () {
-                if (userId) {
-                    window.location.href = 'author_blogs.html?userId=' + userId;
-                }
-            });
+            if (userId) {
+                // 获取作者博客列表
+                getAuthorBlogList(userId);
+                // 获取作者信息
+                getAuthorInfo(userId);
+            } else {
+                $(".loader").hide();
+                $(".right").html('<div class="blog"><div class="title">参数错误</div><div class="desc">未找到作者信息</div></div>');
+            }
 
             // 视差效果JS
-            const parallaxBg = document.querySelector('.parallax-bg');
-
             document.addEventListener('mousemove', (e) => {
                 const mouseX = e.clientX / window.innerWidth;
                 const mouseY = e.clientY / window.innerHeight;
 
-                const moveX = (mouseX - 0.5) * 50; // 增加移动幅度到50px
+                const moveX = (mouseX - 0.5) * 50;
                 const moveY = (mouseY - 0.5) * 50;
 
-                // 应用不同的移动速度到各层
                 document.querySelector('.layer-1').style.transform =
                     `translate(${moveX * 0.3}px, ${moveY * 0.3}px)`;
                 document.querySelector('.layer-2').style.transform =
@@ -105,12 +101,35 @@
                 document.querySelector('.layer-3').style.transform =
                     `translate(${moveX * 0.9}px, ${moveY * 0.9}px)`;
             });
+
+            // 返回列表按钮功能
+            document.getElementById('backToList').addEventListener('click', function () {
+                history.back();
+            });
+
+            // 返回顶部按钮功能
+            document.getElementById('backToTop').addEventListener('click', function () {
+                window.scrollTo({
+                    top: 0,
+                    behavior: 'smooth'
+                });
+            });
+
+            // 监听滚动事件，控制返回顶部按钮的显示
+            window.addEventListener('scroll', function () {
+                const backToTopButton = document.getElementById('backToTop');
+                if (window.pageYOffset > 300) {
+                    backToTopButton.style.display = 'flex';
+                } else {
+                    backToTopButton.style.display = 'none';
+                }
+            });
         });
 
-        function getBlogList() {
+        function getAuthorBlogList(userId) {
             $.ajax({
                 type: "get",
-                url: "/blog/getList",
+                url: "/blog/getListByUserId?userId=" + userId,
                 success: function (result) {
                     $(".loader").hide();
 
@@ -134,7 +153,7 @@
                         }
                         $(".right").append(finalHtml);
                     } else {
-                        $(".right").html('<div class="blog"><div class="title">暂无博客</div><div class="desc">您还没有发表任何博客，点击"写博客"开始创作吧！</div></div>');
+                        $(".right").html('<div class="blog"><div class="title">暂无博客</div><div class="desc">该作者还没有发表任何博客</div></div>');
                     }
                 },
                 error: function (error) {
@@ -151,42 +170,23 @@
             });
         }
 
-        function getUserInfo(url) {
+        function getAuthorInfo(userId) {
             $.ajax({
                 type: "get",
-                url: url,
+                url: "/user/getUserInfo?userId=" + userId,
                 success: function (result) {
                     if (result.code == 200) {
                         $("#author-name").text(result.data.userName);
                         $("#github-link").attr("href", result.data.githubUrl);
-                        $("#article-count").text(result.data.blogTotal);
-                        $("#category-count").text(result.data.totalCategory);
-                    } else {
-                        alert("查询不到作者信息，用户可能已注销账号");
-                        $("#author-name").text("未知用户");
-                        $("#github-link").attr("href", "https://github.com/");
-                        $("#article-count").text("未知");
-                        $("#category-count").text("未知");
                     }
                 },
                 error: function (error) {
-                    alert("查询不到作者信息，用户可能已注销账号");
-                    $("#author-name").text("匿名用户");
-                    $("#github-link").attr("href", "https://github.com/");
-                    $("#article-count").text("0");
-                    $("#category-count").text("0");
-                    try {
-                        const errorResponse = JSON.parse(error.responseText);
-                        alert(errorResponse.errorMsg || "获取用户信息失败: " + error.status + " " + error.statusText);
-                    } catch (e) {
-                        alert("获取用户信息失败: " + error.status + " " + error.statusText);
-                    }
+                    console.log("获取作者信息失败");
                 }
             });
         }
 
-
-        // 注销函数
+        // 退出函数
         function logout() {
             localStorage.removeItem("loginUserId");
             localStorage.removeItem("token");

@@ -6,28 +6,62 @@
     font-family: 'Segoe UI', 'Microsoft YaHei', sans-serif;
 }
 
+/* 全局背景动画 */
 body {
+    margin: 0;
+    padding: 0;
+    background: linear-gradient(-45deg, #ffdde1, #ee9ca7, #c1c8e4, #d4fc79);
+    background-size: 400% 400%;
+    animation: gradientBG 15s ease infinite;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     min-height: 100vh;
     padding-bottom: 50px;
     color: #333;
     position: relative;
     overflow-x: hidden;
-    /* 动态渐变背景 */
-    background: linear-gradient(-45deg, #ee7752, #e73c7e, #23a6d5, #23d5ab);
-    background-size: 400% 400%;
-    animation: gradientBG 15s ease infinite;
 }
 
-@keyframes gradientBG {
-    0% {
-        background-position: 0% 50%;
-    }
-    50% {
-        background-position: 100% 50%;
-    }
-    100% {
-        background-position: 0% 50%;
-    }
+/* ===== 视差背景 ===== */
+.parallax-bg {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: -1; /* 确保在内容下方 */
+    overflow: hidden;
+}
+
+.parallax-layer {
+    position: absolute;
+    top: -10%;
+    left: -10%;
+    width: 120%;
+    height: 120%;
+    background-position: center;
+    background-size: cover;
+    transition: transform 0.1s ease-out;
+    pointer-events: none;
+    will-change: transform; /* 优化性能 */
+}
+
+.layer-1 {
+    background-image: 
+        radial-gradient(circle at 30% 40%, rgba(52, 152, 219, 0.15) 0%, transparent 25%),
+        radial-gradient(circle at 70% 60%, rgba(46, 204, 113, 0.15) 0%, transparent 25%),
+        radial-gradient(circle at 50% 20%, rgba(155, 89, 182, 0.15) 0%, transparent 25%);
+}
+
+.layer-2 {
+    background-image: 
+        linear-gradient(45deg, rgba(52, 152, 219, 0.05) 0%, transparent 50%),
+        linear-gradient(135deg, rgba(46, 204, 113, 0.05) 0%, transparent 50%);
+}
+
+.layer-3 {
+    background-image: 
+        radial-gradient(circle at 80% 30%, rgba(231, 76, 60, 0.1) 0%, transparent 30%),
+        radial-gradient(circle at 20% 70%, rgba(241, 196, 15, 0.1) 0%, transparent 30%);
 }
 
 /* ===== 导航栏样式 ===== */
@@ -121,8 +155,8 @@ body {
     margin: 30px auto;
     padding: 0 20px;
     gap: 25px;
-    position: relative;
-    z-index: 1;
+    position: relative; /* 确保内容在背景之上 */
+    z-index: 1; /* 确保内容在背景之上 */
 }
 
 .left {
@@ -165,56 +199,25 @@ body {
     color: #2c3e50;
 }
 
-/* ===== 渐变色动态按钮样式（保持原来的紫色渐变） ===== */
 .card a {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); /* 保持原来的紫色渐变 */
+    display: inline-block;
+    background: linear-gradient(to right, #3498db, #3D99E2);
     color: white;
-    padding: 10px 20px;
+    padding: 8px 20px;
     border-radius: 25px;
     text-decoration: none;
-    font-weight: 600;
+    font-weight: 500;
     margin-bottom: 20px;
     transition: all 0.3s ease;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
-    position: relative;
-    overflow: hidden;
-    z-index: 1;
-}
-
-.card a::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 0%;
-    height: 100%;
-    background: linear-gradient(135deg, #764ba2 0%, #667eea 100%); /* 保持原来的反向紫色渐变 */
-    transition: all 0.4s ease;
-    z-index: -1;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
 }
 
 .card a:hover {
     transform: translateY(-3px);
-    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.2);
 }
 
-.card a:hover::before {
-    width: 100%;
-}
-
-.card a:active {
-    transform: translateY(1px);
-}
-
-.card a i {
-    margin-right: 8px;
-    font-size: 1.1em;
-}
-
-.row {
+/* .row {
     display: flex;
     justify-content: space-around;
     margin-top: 10px;
@@ -223,12 +226,17 @@ body {
 .row span:first-child {
     font-weight: 600;
     color: #3498db;
+    cursor: pointer;
+} */
+
+.row span:first-child:hover {
+    text-decoration: underline;
 }
 
-.row span:last-child {
+/* .row span:last-child {
     font-weight: 600;
     color: #e74c3c;
-}
+} */
 
 /* ===== 博客列表项样式 ===== */
 .blog {
@@ -289,19 +297,19 @@ body {
     overflow: hidden;
 }
 
-/* ===== 精美的动态渐变查看全文按钮（使用蓝色渐变） ===== */
+/* ===== 精美的查看全文按钮 ===== */
 .detail {
     display: inline-flex;
     align-items: center;
-    color: #1e90ff; /* 深蓝色文字 */
+    color: #3498db;
     text-decoration: none;
     font-weight: 600;
     font-size: 1.05rem;
     transition: all 0.3s ease;
     padding: 8px 20px;
     border-radius: 30px;
-    background: transparent; /* 默认透明背景 */
-    border: 2px solid #1e90ff; /* 深蓝色边框 */
+    background: linear-gradient(to right, rgba(52, 152, 219, 0.1), rgba(52, 152, 219, 0.05));
+    border: 1px solid rgba(52, 152, 219, 0.2);
     box-shadow: 0 3px 10px rgba(0, 0, 0, 0.05);
     position: relative;
     overflow: hidden;
@@ -315,8 +323,8 @@ body {
     left: 0;
     width: 0%;
     height: 100%;
-    background: linear-gradient(135deg, #add8e6, #1e90ff); /* 浅蓝色到蓝色渐变 */
-    transition: all 0.6s ease;
+    background: linear-gradient(to right, #3498db, #3D99E2);
+    transition: all 0.4s ease;
     z-index: -1;
     border-radius: 30px;
 }
@@ -332,26 +340,21 @@ body {
 }
 
 .detail:hover {
-    color: white; /* 悬停时文字变为白色 */
-    box-shadow: 0 5px 20px rgba(30, 144, 255, 0.4); /* 蓝色阴影 */
-    border-color: transparent; /* 边框变为透明 */
-    transform: translateY(-3px); /* 向上轻微移动 */
+    color: white;
+    box-shadow: 0 5px 15px rgba(52, 152, 219, 0.3);
+    border-color: transparent;
 }
 
 .detail:hover::before {
-    width: 100%; /* 渐变背景填充整个按钮 */
+    width: 100%;
 }
 
 .detail:hover span {
-    transform: translateX(-5px); /* 文字向左移动 */
+    transform: translateX(-5px);
 }
 
 .detail:hover i {
-    transform: translateX(5px); /* 图标向右移动 */
-}
-
-.detail:active {
-    transform: translateY(1px); /* 点击时向下移动 */
+    transform: translateX(5px);
 }
 
 /* ===== 加载动画 ===== */
@@ -444,35 +447,107 @@ body {
         padding: 6px 15px;
         font-size: 0.95rem;
     }
+    
+    /* 在移动设备上减小视差效果 */
+    .parallax-layer {
+        filter: blur(15px) !important;
+    }
 }
 
-/* 头像悬停效果 */
-#author-avatar {
-    transition: all 0.3s ease;
-    position: relative;
+@keyframes gradientBG {
+    0% {
+        background-position: 0% 50%;
+    }
+
+    50% {
+        background-position: 100% 50%;
+    }
+
+    100% {
+        background-position: 0% 50%;
+    }
+}
+
+/* 返回顶部和返回列表按钮 */
+.back-to-top,
+.back-to-list {
+    position: fixed;
+    bottom: 30px;
+    width: 50px;
+    height: 50px;
     border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     cursor: pointer;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    z-index: 1000;
+    transition: all 0.3s ease;
+    color: white;
+    font-size: 18px;
 }
 
-#author-avatar:hover {
-    transform: scale(1.05);
-    box-shadow: 0 0 0 4px rgba(173, 216, 230, 0.8);
+.back-to-top {
+    right: 30px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    display: none;
+    /* 默认隐藏 */
 }
 
-#author-avatar::before {
-    content: '';
-    position: absolute;
-    top: -6px;
-    left: -6px;
-    right: -6px;
-    bottom: -6px;
-    border: 2px solid rgba(30, 144, 255, 0.4);
-    border-radius: 50%;
-    opacity: 0;
-    transition: opacity 0.3s ease;
-    pointer-events: none;
+.back-to-list {
+    right: 100px;
+    background: linear-gradient(135deg, #add8e6, #1e90ff);
+    width: auto;
+    padding: 0 20px;
+    border-radius: 25px;
+    display: flex;
+    gap: 8px;
+    align-items: center;
 }
 
-#author-avatar:hover::before {
-    opacity: 1;
+.back-to-top:hover,
+.back-to-list:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
 }
+
+.back-to-top:active,
+.back-to-list:active {
+    transform: translateY(-2px);
+}
+
+/* 响应式设计 */
+@media (max-width: 768px) {
+    .back-to-top,
+    .back-to-list {
+        width: 45px;
+        height: 45px;
+        font-size: 16px;
+        bottom: 20px;
+    }
+
+    .back-to-list {
+        right: 80px;
+        width: auto;
+        padding: 0 15px;
+        border-radius: 25px;
+    }
+}
+
+@media (max-width: 480px) {
+    .back-to-top,
+    .back-to-list {
+        width: 40px;
+        height: 40px;
+        font-size: 14px;
+        bottom: 15px;
+    }
+
+    .back-to-list {
+        right: 70px;
+        width: auto;
+        padding: 0 15px;
+        border-radius: 25px;
+    }
+}
+

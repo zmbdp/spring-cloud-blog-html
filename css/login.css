@@ -1,72 +1,203 @@
+/* 基础样式重置 */
 * {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
-    font-family: "Outfit", sans-serif;
 }
 
 body {
-    height: 100vh;
-    background: url("../pic/bg.jpg") no-repeat center center fixed;
-    background-size: cover;
+    font-family: 'Outfit', 'Microsoft YaHei', sans-serif;
+    /* 动态渐变背景 */
+    background: linear-gradient(-45deg, #ee7752, #e73c7e, #23a6d5, #23d5ab);
+    background-size: 400% 400%;
+    animation: gradientBG 15s ease infinite;
+    min-height: 100vh;
     display: flex;
-    justify-content: center;
     align-items: center;
-    position: relative;
+    justify-content: center;
+    padding: 20px;
 }
 
-body::before {
-    content: "";
+@keyframes gradientBG {
+    0% {
+        background-position: 0% 50%;
+    }
+    50% {
+        background-position: 100% 50%;
+    }
+    100% {
+        background-position: 0% 50%;
+    }
+}
+
+/* 动态背景元素 */
+.background {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: -1;
+    overflow: hidden;
+}
+
+.circle {
     position: absolute;
-    inset: 0;
-    background: rgba(0, 0, 0, 0.25);
-    z-index: 0;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.1);
+    animation: float 15s infinite ease-in-out;
 }
 
+.circle:nth-child(1) {
+    width: 300px;
+    height: 300px;
+    top: 10%;
+    left: 5%;
+    animation-delay: 0s;
+}
+
+.circle:nth-child(2) {
+    width: 200px;
+    height: 200px;
+    top: 70%;
+    left: 20%;
+    animation-delay: 2s;
+}
+
+.circle:nth-child(3) {
+    width: 150px;
+    height: 150px;
+    top: 30%;
+    right: 10%;
+    animation-delay: 4s;
+}
+
+.circle:nth-child(4) {
+    width: 250px;
+    height: 250px;
+    bottom: 10%;
+    right: 25%;
+    animation-delay: 1s;
+}
+
+.circle:nth-child(5) {
+    width: 180px;
+    height: 180px;
+    top: 40%;
+    left: 40%;
+    animation-delay: 3s;
+}
+
+@keyframes float {
+    0%, 100% {
+        transform: translate(0, 0) rotate(0deg);
+    }
+    25% {
+        transform: translate(20px, 20px) rotate(90deg);
+    }
+    50% {
+        transform: translate(0, 40px) rotate(180deg);
+    }
+    75% {
+        transform: translate(-20px, 20px) rotate(270deg);
+    }
+}
+
+/* 登录容器 */
 .container-login {
-    position: relative;
-    z-index: 1;
-    width: 480px;
-    padding: 40px;
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(10px);
     border-radius: 20px;
-    background: rgba(255, 255, 255, 0.15);
-    backdrop-filter: blur(14px);
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.25);
-    color: #fff;
+    padding: 40px;
+    width: 100%;
+    max-width: 450px;
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
+    position: relative;
+    overflow: hidden;
+    animation: fadeIn 0.8s ease;
 }
 
+.container-login::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: linear-gradient(45deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+    transform: rotate(45deg);
+    animation: shine 3s infinite;
+    z-index: -1;
+}
+
+@keyframes shine {
+    0% {
+        transform: translateX(-100%) translateY(-100%) rotate(45deg);
+    }
+    100% {
+        transform: translateX(100%) translateY(100%) rotate(45deg);
+    }
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Logo容器 */
 .logo-container {
     text-align: center;
     margin-bottom: 20px;
 }
 
 .logo-container img {
-    width: 70px;
-    height: 70px;
-    object-fit: cover;
+    width: 80px;
+    height: 80px;
     border-radius: 50%;
-    box-shadow: 0 6px 14px rgba(0, 0, 0, 0.2);
+    object-fit: cover;
+    border: 3px solid #fff;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    animation: pulse 2s infinite;
 }
 
-.container-login h2 {
-    font-size: 24px;
-    font-weight: 600;
+@keyframes pulse {
+    0% {
+        box-shadow: 0 0 0 0 rgba(30, 144, 255, 0.7);
+    }
+    70% {
+        box-shadow: 0 0 0 15px rgba(30, 144, 255, 0);
+    }
+    100% {
+        box-shadow: 0 0 0 0 rgba(30, 144, 255, 0);
+    }
+}
+
+/* 标题 */
+h2 {
     text-align: center;
     margin-bottom: 30px;
-    color: #ffffffee;
+    color: #333;
+    font-weight: 600;
+    font-size: 24px;
 }
 
+/* 表单组 */
 .form-group {
     margin-bottom: 20px;
-    display: flex;
-    flex-direction: column;
 }
 
-.form-group label {
-    font-weight: 600;
-    font-size: 14px;
-    color: #ffffffd9;
+label {
+    display: block;
     margin-bottom: 8px;
+    font-weight: 500;
+    color: #444;
+    font-size: 14px;
 }
 
 .input-wrapper {
@@ -75,136 +206,214 @@ body::before {
     align-items: center;
 }
 
-.form-group input {
-    width: 100%;
-    padding: 12px 44px 12px 16px;
-    font-size: 15px;
-    border-radius: 10px;
-    border: none;
-    outline: none;
-    background: rgba(255, 255, 255, 0.2);
-    color: #fff;
-    transition: all 0.2s;
-    line-height: 1.2;
-}
-
-.form-group input::placeholder {
-    color: #ffffffaa;
-    font-size: 14px;
-}
-
-.form-group input:focus {
-    background: rgba(255, 255, 255, 0.3);
-    box-shadow: 0 0 0 2px #38bdf855;
-}
-
-.input-wrapper svg.icon {
+.input-wrapper .icon {
     position: absolute;
-    right: 14px;
-    width: 20px;
-    height: 20px;
-    fill: #ffffffaa;
-    pointer-events: none;
-    transition: fill 0.3s, transform 0.3s;
-    top: 50%;
-    transform: translateY(-50%);
-    cursor: default;
+    left: 15px;
+    width: 18px;
+    height: 18px;
+    fill: #777;
+    transition: fill 0.3s ease;
 }
 
-.form-group input:focus + svg.icon {
-    fill: #38bdf8;
-    transform: translateY(-50%) scale(1.3);
-}
-
-.email-code-group {
-    display: flex;
-    gap: 10px;
-    position: relative;
-    align-items: center;
+.input-wrapper input {
     width: 100%;
+    padding: 15px 15px 15px 50px;
+    border: 2px solid #e1e5ee;
+    border-radius: 12px;
+    font-size: 15px;
+    transition: all 0.3s ease;
+    background: #f8f9fa;
+}
+
+.input-wrapper input:focus {
+    outline: none;
+    border-color: #3498db;
+    box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.2);
+    background: #fff;
+}
+
+.input-wrapper input:focus + .icon {
+    fill: #3498db;
+}
+
+/* 邮箱验证码组 */
+.email-code-group {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.email-code-group .icon {
+    position: absolute;
+    left: 15px;
+    width: 18px;
+    height: 18px;
+    fill: #777;
+    transition: fill 0.3s ease;
 }
 
 .email-code-group input {
-    flex: 2;
-    padding: 12px 44px 12px 16px;
-    border-radius: 10px;
-    border: none;
-    outline: none;
-    background: rgba(255, 255, 255, 0.2);
-    color: #fff;
+    flex: 1;
+    padding: 15px 15px 15px 50px;
+    border: 2px solid #e1e5ee;
+    border-radius: 12px 0 0 12px;
     font-size: 15px;
-    transition: all 0.2s;
-    line-height: 1.2;
-}
-
-.email-code-group input::placeholder {
-    color: #ffffffaa;
-    font-size: 14px;
+    transition: all 0.3s ease;
+    background: #f8f9fa;
 }
 
 .email-code-group input:focus {
-    background: rgba(255, 255, 255, 0.3);
-    box-shadow: 0 0 0 2px #38bdf855;
+    outline: none;
+    border-color: #3498db;
+    box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.2);
+    background: #fff;
 }
 
-.email-code-group svg.icon {
-    position: absolute;
-    right: 120px;
-    top: 50%;
-    width: 18px;
-    height: 18px;
-    fill: #ffffffaa;
-    pointer-events: none;
-    transition: fill 0.3s, transform 0.3s;
-    transform: translateY(-50%);
-    cursor: default;
-}
-
-.email-code-group input:focus + svg.icon {
-    fill: #38bdf8;
-    transform: translateY(-50%) scale(1.3);
+.email-code-group input:focus + .icon {
+    fill: #3498db;
 }
 
 .btn-code {
-    flex: 1;
-    background: linear-gradient(to right, #f59e0b, #fbbf24);
-    color: #fff;
+    padding: 15px 20px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
     border: none;
-    border-radius: 10px;
-    font-size: 15px;
-    cursor: pointer;
-    transition: all 0.2s;
+    border-radius: 0 12px 12px 0;
     font-weight: 600;
-    height: 44px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-size: 14px;
+    white-space: nowrap;
 }
 
 .btn-code:hover {
-    transform: translateY(-1px);
-    opacity: 0.95;
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
 }
 
+.btn-code:active {
+    transform: translateY(0);
+}
+
+.btn-code:disabled {
+    background: #ccc;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
+}
+
+/* 按钮样式 */
 .btn {
     width: 100%;
-    padding: 14px 0;
-    margin-top: 14px;
+    padding: 15px;
     border: none;
     border-radius: 12px;
-    color: white;
     font-size: 16px;
     font-weight: 600;
     cursor: pointer;
-    transition: 0.3s ease-in-out;
+    transition: all 0.3s ease;
+    margin-bottom: 15px;
+    position: relative;
+    overflow: hidden;
 }
 
+.btn::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+    transition: 0.5s;
+}
+
+.btn:hover::before {
+    left: 100%;
+}
+
+/* 立即登录按钮 */
 .btn-login {
-    background: linear-gradient(to right, #38bdf8, #0ea5e9);
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
 }
 
+.btn-login:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 20px rgba(102, 126, 234, 0.6);
+}
+
+.btn-login:active {
+    transform: translateY(-1px);
+}
+
+/* 我要注册按钮 */
 .btn-secondary {
-    background: linear-gradient(to right, #c084fc, #a855f7);
+    background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+    color: white;
+    box-shadow: 0 5px 15px rgba(67, 233, 123, 0.4);
 }
 
-.btn:hover {
-    transform: translateY(-2px);
-    opacity: 0.95;
+.btn-secondary:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 20px rgba(67, 233, 123, 0.6);
+}
+
+.btn-secondary:active {
+    transform: translateY(-1px);
+}
+
+/* 忘记密码按钮 */
+.btn-forgot-password {
+    background: linear-gradient(135deg, #ff9a9e 0%, #fad0c4 100%);
+    color: #333;
+    box-shadow: 0 5px 15px rgba(255, 154, 158, 0.4);
+}
+
+.btn-forgot-password:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 20px rgba(255, 154, 158, 0.6);
+}
+
+.btn-forgot-password:active {
+    transform: translateY(-1px);
+}
+
+.btn:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
+    transform: none;
+}
+
+/* 响应式设计 */
+@media (max-width: 576px) {
+    .container-login {
+        padding: 30px 20px;
+        margin: 10px;
+    }
+    
+    h2 {
+        font-size: 22px;
+    }
+    
+    .input-wrapper input,
+    .email-code-group input {
+        padding: 12px 12px 12px 45px;
+        font-size: 14px;
+    }
+    
+    .btn {
+        padding: 12px;
+        font-size: 15px;
+    }
+    
+    .btn-code {
+        padding: 12px 15px;
+        font-size: 13px;
+    }
+    
+    .circle {
+        transform: scale(0.7);
+    }
 }

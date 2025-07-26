@@ -7,49 +7,75 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>博客详情页</title>
 
-    <link rel="stylesheet" href="css/common.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="css/detail.css">
-
 </head>
 
 <body>
+    <!-- 视差背景层 -->
+    <div class="parallax-bg">
+        <div class="parallax-layer layer-1"></div>
+        <div class="parallax-layer layer-2"></div>
+        <div class="parallax-layer layer-3"></div>
+    </div>
+
     <div class="nav">
-        <img src="pic/logo2.jpg" alt="">
-        <span class="blog-title">我的博客系统</span>
+        <img src="pic/logo.jpg" alt="">
+        <span class="blog-title">码上博客</span>
         <div class="space"></div>
-        <a class="nav-span" href="blog_list.html">主页</a>
-        <a class="nav-span" href="blog_edit.html">写博客</a>
-        <a class="nav-span" href="#" onclick="logout()">注销</a>
+        <a href="blog_list.html">
+            <i class="fas fa-home"></i> 主页
+        </a>
+        <a href="blog_edit.html">
+            <i class="fas fa-pen"></i> 写博客
+        </a>
+        <a href="#" onclick="logout()">
+            <i class="fas fa-sign-out-alt"></i> 退出登录
+        </a>
     </div>
 
     <div class="container">
         <div class="left">
-            <div class="card">
+            <div class="card">;
+                <div id="author-id" style="display: none;"></div>
                 <img src="pic/avatar.jpg" alt="">
-                <h3></h3>
-                <a href="#">GitHub 地址</a>
+                <h3 id="author-name"></h3>
+                <a href="#" id="github-link">
+                    <i class="fab fa-github"></i> GitHub 地址
+                </a>
                 <div class="row">
-                    <span>文章</span>
+                    <span id="original-text">原创</span>
                     <span>分类</span>
                 </div>
                 <div class="row">
-                    <span>2</span>
-                    <span>1</span>
+                    <span id="article-count">0</span>
+                    <span id="category-count">0</span>
                 </div>
             </div>
         </div>
         <div class="right">
             <div class="content">
                 <div class="title"></div>
-                <div class="date"></div>
+                <div class="date">
+                    <i class="far fa-calendar-alt"></i>
+                    <span></span>
+                </div>
                 <div class="detail" id="detail" style="background-color: transparent">
-
                 </div>
                 <div class="operating">
                 </div>
             </div>
-
         </div>
+    </div>
+
+    <!-- 返回顶部按钮 -->
+    <div class="back-to-top" id="backToTop">
+        <i class="fas fa-arrow-up"></i>
+    </div>
+
+    <!-- 返回列表按钮 -->
+    <div class="back-to-list" id="backToList">
+        <i class="fas fa-list"></i> 主页
     </div>
 
     <!-- 引入 editor.md 的依赖 -->
@@ -60,6 +86,22 @@
     <script src="blog-editormd/editormd.js"></script>
     <script src="js/common.js"></script>
     <script>
+        // 视差效果JS
+        document.addEventListener('mousemove', (e) => {
+            const mouseX = e.clientX / window.innerWidth;
+            const mouseY = e.clientY / window.innerHeight;
+
+            const moveX = (mouseX - 0.5) * 50;
+            const moveY = (mouseY - 0.5) * 50;
+
+            document.querySelector('.layer-1').style.transform =
+                `translate(${moveX * 0.3}px, ${moveY * 0.3}px)`;
+            document.querySelector('.layer-2').style.transform =
+                `translate(${moveX * 0.6}px, ${moveY * 0.6}px)`;
+            document.querySelector('.layer-3').style.transform =
+                `translate(${moveX * 0.9}px, ${moveY * 0.9}px)`;
+        });
+
         //获取博客详情
         $.ajax({
             type: "get",
@@ -68,22 +110,22 @@
                 if (result.code == 200 && result.data != null) {
                     var blog = result.data;
                     $(".title").text(blog.title);
-                    $(".date").text(blog.updateTime);
-                    // $(".detail").text(blog.content);
+                    $(".date span").text(blog.updateTime);
                     editormd.markdownToHTML("detail", {
                         markdown: blog.content,
                     });
-                    //判断是否显示编辑/删除按钮
 
-                    if (blog.loginUser) {
-                        console.log(blog.loginUser);
+                    // 保存作者ID用于跳转
+                    $("#author-id").data("userid", blog.userId);
+
+                    //判断是否显示编辑/删除按钮
+                    if (blog.userId == localStorage.getItem("loginUserId")) {
                         var finalHtml = "";
-                        finalHtml += '<button onclick="window.location.href=\'blog_update.html?blogId=' + blog.id + '\'">编辑</button>';
-                        finalHtml += '<button onclick="deleteBlog(' + blog.id + ')">删除</button>';
-                        console.log(finalHtml);
+                        finalHtml += '<button onclick="window.location.href=\'blog_update.html?blogId=' + blog.id + '\'"><i class="fas fa-edit"></i> 编辑</button>';
+                        finalHtml += '<button onclick="deleteBlog(' + blog.id + ')"><i class="fas fa-trash-alt"></i> 删除</button>';
                         $(".operating").html(finalHtml);
                     } else {
-                        alert("非作者，仅限阅读");
+                        $(".operating").hide();
                     }
                 } else {
                     alert("内部错误，请联系管理员");
@@ -95,27 +137,136 @@
                 if (error != null && error.status == 401) {
                     alert("请先登录");
                     location.href = "blog_login.html";
+                } else {
+                    // 其他错误处理
+                    try {
+                        const errorResponse = JSON.parse(error.responseText);
+                        alert(errorResponse.errorMsg || "请求失败: " + error.status + " " + error.statusText);
+                    } catch (e) {
+                        alert("请求失败: " + error.status + " " + error.statusText);
+                    }
+                    location.href = "blog_list.html";
                 }
             }
         });
 
         //显示博客作者信息
-        getUserInfo("/user/getAuthorInfo" + location.search);
+        var url = "/user/getAuthorInfo" + location.search;
+        getUserInfo(url);
 
         function deleteBlog(blogId) {
             var isDelete = confirm("确认删除？");
             if (isDelete) {
                 $.ajax({
                     type: "post",
-                    url: "/blog/delete" + location.search,
+                    url: "/blog/delete?blogId=" + blogId,
                     success: function (result) {
                         if (result.code == 200 && result.data == true) {
                             location.href = "blog_list.html";
                         } else {
-                            alert(result);
+                            alert(result.errorMsg || "删除失败");
+                        }
+                    },
+                    error: function (error) {
+                        try {
+                            const errorResponse = JSON.parse(error.responseText);
+                            alert(errorResponse.errorMsg || "删除失败: " + error.status + " " + error.statusText);
+                        } catch (e) {
+                            alert("删除失败: " + error.status + " " + error.statusText);
                         }
                     }
                 });
+            }
+        }
+
+        // 获取作者信息的函数
+        function getUserInfo(url) {
+            $.ajax({
+                type: "get",
+                url: url,
+                success: function (result) {
+                    if (result.code == 200) {
+                        $("#author-name").text(result.data.userName);
+                        $("#github-link").attr("href", result.data.githubUrl);
+                        $("#article-count").text(result.data.blogTotal);
+                        $("#category-count").text(result.data.totalCategory);
+
+                        // 只有当有作者信息时，才将"原创"设置为可点击
+                        if (result.data.userName && result.data.userName !== "未知用户") {
+                            $("#original-text").css({
+                                "cursor": "pointer",
+                                "color": "#3498db",
+                                "text-decoration": "underline"
+                            }).attr("onclick", "showAuthorBlogs()");
+                        }
+                    } else {
+                        alert("查询不到作者信息，用户可能已注销账号");
+                        $("#author-name").text("未知用户");
+                        $("#github-link").attr("href", "https://github.com/");
+                        $("#article-count").text("未知");
+                        $("#category-count").text("未知");
+
+                        // 如果没有作者信息，确保"原创"是普通文本
+                        $("#original-text").css({
+                            "cursor": "default",
+                            "color": "inherit",
+                            "text-decoration": "none"
+                        }).removeAttr("onclick");
+                    }
+                },
+                error: function (error) {
+                    alert("查询不到作者信息，用户可能已注销账号");
+                    $("#author-name").text("未知用户");
+                    $("#github-link").attr("href", "https://github.com/");
+                    $("#article-count").text("未知");
+                    $("#category-count").text("未知");
+
+                    // 如果获取作者信息失败，确保"原创"是普通文本
+                    $("#original-text").css({
+                        "cursor": "default",
+                        "color": "inherit",
+                        "text-decoration": "none"
+                    }).removeAttr("onclick");
+
+                    try {
+                        const errorResponse = JSON.parse(error.responseText);
+                        alert(errorResponse.errorMsg || "获取用户信息失败: " + error.status + " " + error.statusText);
+                    } catch (e) {
+                        alert("获取用户信息失败: " + error.status + " " + error.statusText);
+                    }
+                }
+            });
+        }
+
+        // 返回列表按钮功能
+        document.getElementById('backToList').addEventListener('click', function () {
+            window.location.href = 'blog_list.html';
+        });
+
+        // 返回顶部按钮功能
+        document.getElementById('backToTop').addEventListener('click', function () {
+            window.scrollTo({
+                top: 0,
+                behavior: 'smooth'
+            });
+        });
+
+        // 监听滚动事件，控制返回顶部按钮的显示
+        window.addEventListener('scroll', function () {
+            const backToTopButton = document.getElementById('backToTop');
+            if (window.pageYOffset > 300) {
+                backToTopButton.style.display = 'flex';
+            } else {
+                backToTopButton.style.display = 'none';
+            }
+        });
+
+        // 显示作者博客列表
+        function showAuthorBlogs() {
+            // 获取作者ID（在获取博客详情时保存）
+            var authorId = $("#author-id").data("userid");
+            if (authorId) {
+                window.location.href = 'author_blogs.html?userId=' + authorId;
             }
         }
     </script>
