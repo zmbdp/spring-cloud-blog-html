@@ -6,6 +6,14 @@
     font-family: 'Segoe UI', 'Microsoft YaHei', sans-serif;
 }
 
+/* 内容包装器，确保内容在背景之上 */
+.content-wrapper {
+    position: relative;
+    z-index: 10; /* 确保内容在背景元素之上 */
+    width: 100%;
+}
+
+/* 动态背景 */
 body {
     background: linear-gradient(135deg, #1a2980, #26d0ce);
     min-height: 100vh;
@@ -13,6 +21,86 @@ body {
     justify-content: center;
     align-items: center;
     padding: 20px;
+    position: relative;
+}
+
+.background-animation {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: -1;
+}
+
+.circle {
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(0px); /* 模糊效果 */
+    opacity: 0.7;
+    mix-blend-mode: overlay;
+}
+
+.circle-1 {
+    width: 300px;
+    height: 300px;
+    background: linear-gradient(45deg, #ff9a9e, #fad0c4);
+    top: 10%;
+    left: 10%;
+    animation: float 15s infinite ease-in-out;
+    box-shadow: 0 0 50px rgba(255, 154, 158, 0.5);
+}
+
+.circle-2 {
+    width: 250px;
+    height: 250px;
+    background: linear-gradient(45deg, #a1c4fd, #c2e9fb);
+    bottom: 15%;
+    right: 15%;
+    animation: float 18s infinite ease-in-out reverse;
+    box-shadow: 0 0 50px rgba(161, 196, 253, 0.5);
+}
+
+.circle-3 {
+    width: 200px;
+    height: 200px;
+    background: linear-gradient(45deg, #ffecd2, #fcb69f);
+    top: 50%;
+    right: 20%;
+    animation: float 12s infinite ease-in-out;
+    box-shadow: 0 0 50px rgba(255, 236, 210, 0.5);
+}
+
+.circle-4 {
+    width: 150px;
+    height: 150px;
+    background: linear-gradient(45deg, #84fab0, #8fd3f4);
+    bottom: 20%;
+    left: 20%;
+    animation: float 20s infinite ease-in-out;
+    box-shadow: 0 0 50px rgba(133, 250, 176, 0.5);
+}
+
+.circle-5 {
+    width: 350px;
+    height: 350px;
+    background: linear-gradient(45deg, #d4fc79, #96e6a1);
+    top: 30%;
+    left: 30%;
+    animation: float 25s infinite ease-in-out reverse;
+    box-shadow: 0 0 50px rgba(212, 252, 121, 0.5);
+}
+
+/* 保持原来的渐变背景作为基础 */
+body::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(135deg, #1a2980, #26d0ce);
+    z-index: -2; /* 这应该是最小的z-index值 */
 }
 
 /* 注册容器 */
@@ -452,6 +540,21 @@ body {
     color: #ff6b6b;
     margin-bottom: 20px;
     animation: pulse 2s infinite;
+}
+
+@keyframes float {
+    0%, 100% {
+        transform: translate(0, 0) rotate(0deg);
+    }
+    25% {
+        transform: translate(20px, 30px) rotate(90deg);
+    }
+    50% {
+        transform: translate(0, 50px) rotate(180deg);
+    }
+    75% {
+        transform: translate(-20px, 30px) rotate(270deg);
+    }
 }
 
 @keyframes pulse {
